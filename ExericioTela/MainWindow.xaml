@@ -1,0 +1,28 @@
+﻿<Window x:Class="ExercicioTela.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExercicioTela"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel Margin="5,3,10,10">
+            <TextBlock Text="Digite as informações para as oito pessoas:"/>
+        </StackPanel>
+        <StackPanel Margin="20,20,0,0">
+            <TextBlock Text="Digite o sexo (Masculino/Feminino): " Margin="0,0,0,5"/>
+            <TextBox x:Name="SexoText" TextWrapping="Wrap" Text="" Width="795"/>
+        </StackPanel>
+        <StackPanel Margin="20,60,0,0">
+            <TextBlock Text="Digite a altura (em metros): " Margin="0,0,0,5"/>
+            <TextBox x:Name="AlturaText" TextWrapping="Wrap" Text="" Width="795"/>
+        </StackPanel>
+        <StackPanel Margin="20,100,0,0">
+            <Button x:Name="ButtonSend" Content="Adicionar Pessoa" Margin="0,10,0,0" Height="40" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FF68EFDA" Click="Button_Click"/>
+        </StackPanel>
+        <StackPanel Margin="20,150,0,0">
+            <TextBlock x:Name="ResultsText" Text="" Margin="0,0,0,5"/>
+        </StackPanel>
+    </Grid>
+</Window>
