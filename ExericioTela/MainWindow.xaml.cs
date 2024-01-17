@@ -1,68 +1,82 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace ExercicioTela
 {
     public partial class MainWindow : Window
     {
         Pessoa[] pessoas = new Pessoa[8];
+        int pessoaatual = 0;
+
+        int quantidadeMulheresMenos170 = 0;
+        double alturaHomemMaisAlto = 0;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void info(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SexoText.Text) || string.IsNullOrWhiteSpace(AlturaText.Text))
+            string sexoSelecionado = string.Empty;
+
+            if (CheckFeminino.IsChecked == true)
             {
-                MessageBox.Show("Digite informações válidas para sexo e altura.");
+                sexoSelecionado = "Feminino";
+            }
+
+            if (CheckMasculino.IsChecked == true)
+            {
+                sexoSelecionado = "Masculino";
+            }
+
+            if (string.IsNullOrEmpty(AlturaText.Text))
+            {
+                MessageBox.Show("Digite informações de altura corretas");
                 return;
             }
 
-            Pessoa pessoa = new Pessoa
+            pessoas[pessoaatual] = new Pessoa
             {
-                sexo = SexoText.Text.ToLower(),
-                altura = Convert.ToDouble(AlturaText.Text)
+                Sexo = sexoSelecionado,
+                Altura = Convert.ToDouble(AlturaText.Text)
             };
 
-            pessoasList.Add(pessoa);
+            pessoaatual++;
 
-            SexoText.Text = "";
-            AlturaText.Text = "";
-            if (pessoasList.Count == 8)
+            if (pessoaatual == 8)
             {
                 MostrarResultados();
             }
         }
+
         private void MostrarResultados()
         {
-            int quantidadeMulheresMenos170 = pessoasList.Count(p => p.sexo == "feminino" && p.altura < 1.70);
-
-            double alturaHomemMaisAlto = 0.0; 
-
-           var homens = pessoasList.Where(p => p.sexo == "masculino");
-
-            if (homens.Any())
+            foreach (var pessoa in pessoas)
             {
-                alturaHomemMaisAlto = homens.Max(p => p.altura);
+                if (pessoa.Sexo.ToLower() == "feminino" && pessoa.Altura < 1.70)
+                {
+                    quantidadeMulheresMenos170++;
+                }
+
+                if (pessoa.Sexo.ToLower() == "masculino")
+            {
+                    if (pessoa.Altura > alturaHomemMaisAlto)
+                    {
+                        alturaHomemMaisAlto = pessoa.Altura;
             }
-            else
-            {
-
-                MessageBox.Show("Não há homens na lista.");
+                }
             }
 
             ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {quantidadeMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
         }
-
-    }
-
     public class Pessoa
     {
-        public string sexo { get; set; }
-        public double altura { get; set; }
+            public string Sexo { get; set; }
+            public double Altura { get; set; }
+        }
     }
 }
