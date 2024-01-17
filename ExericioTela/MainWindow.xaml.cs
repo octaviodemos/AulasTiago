@@ -19,7 +19,7 @@ namespace ExercicioTela
             InitializeComponent();
         }
 
-        private void info(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             string sexoSelecionado = string.Empty;
 
@@ -63,18 +63,18 @@ namespace ExercicioTela
                 }
 
                 if (pessoa.Sexo.ToLower() == "masculino")
-            {
+                {
                     if (pessoa.Altura > alturaHomemMaisAlto)
                     {
                         alturaHomemMaisAlto = pessoa.Altura;
-            }
+                    }
                 }
             }
 
             ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {quantidadeMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
         }
-    public class Pessoa
-    {
+        public class Pessoa
+        {
             public string Sexo { get; set; }
             public double Altura { get; set; }
         }

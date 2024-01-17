@@ -12,16 +12,18 @@
         </StackPanel>
         <StackPanel Margin="20,20,0,0">
             <TextBlock Text="Digite o sexo (Masculino/Feminino): " Margin="0,0,0,5"/>
-            <TextBox x:Name="SexoText" TextWrapping="Wrap" Text="" Width="795"/>
+            <RadioButton Name="CheckFeminino" Width="795">Feminino</RadioButton>
+            <RadioButton Name="CheckMasculino" Width="795" Margin="0,5,0,0">Masculino</RadioButton>
         </StackPanel>
-        <StackPanel Margin="20,60,0,0">
+        <StackPanel Margin="20,80,0,0">
             <TextBlock Text="Digite a altura (em metros): " Margin="0,0,0,5"/>
             <TextBox x:Name="AlturaText" TextWrapping="Wrap" Text="" Width="795"/>
         </StackPanel>
-        <StackPanel Margin="20,100,0,0">
-            <Button x:Name="ButtonSend" Content="Adicionar Pessoa" Margin="0,10,0,0" Height="40" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FF68EFDA" Click="Button_Click"/>
+        <StackPanel Margin="20,200,0,0">
+            <Button x:Name="ButtonSend" Content="Adicionar Pessoa" Margin="0,10,0,0" Height="40" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FF68EFDA" Click="Button_Click">
+            </Button>
         </StackPanel>
-        <StackPanel Margin="20,150,0,0">
+        <StackPanel Margin="16,149,4,1">
             <TextBlock x:Name="ResultsText" Text="" Margin="0,0,0,5"/>
         </StackPanel>
     </Grid>
