@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace ExercicioTela
 {
@@ -22,7 +23,8 @@ namespace ExercicioTela
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string sexoSelecionado = string.Empty;
-
+            string alturaDigitada = AlturaText.Text;
+            double altura;
             if (CheckFeminino.IsChecked == true)
             {
                 sexoSelecionado = "Feminino";
@@ -33,18 +35,36 @@ namespace ExercicioTela
                 sexoSelecionado = "Masculino";
             }
 
-            if (string.IsNullOrEmpty(AlturaText.Text))
+            if (string.IsNullOrEmpty(alturaDigitada))
             {
                 MessageBox.Show("Digite informações de altura corretas");
+                AlturaText.Focus();
                 return;
             }
 
-            pessoas[pessoaatual] = new Pessoa
+            if (double.TryParse(alturaDigitada, out altura) == false || altura <= 0)
             {
-                Sexo = sexoSelecionado,
-                Altura = Convert.ToDouble(AlturaText.Text)
-            };
+                MessageBox.Show("Digite informações de altura corretas");
+                AlturaText.Focus();
+                return;
+            }
 
+            MessageBox.Show("Dados salvos");
+
+            if (pessoaatual < 8)
+            {
+                pessoas[pessoaatual] = new Pessoa
+                {
+                    Sexo = sexoSelecionado,
+                    Altura = altura
+                };
+            }
+
+            CheckFeminino.IsChecked = false;
+            CheckMasculino.IsChecked = false;
+            AlturaText.Text = string.Empty;
+
+            AlturaText.Focus();
             pessoaatual++;
 
             if (pessoaatual == 8)
@@ -77,6 +97,24 @@ namespace ExercicioTela
         {
             public string Sexo { get; set; }
             public double Altura { get; set; }
+        }
+
+        private void CheckFeminino_Checked(object sender, RoutedEventArgs e)
+        {
+            AlturaText.Focus();
+        }
+
+        private void CheckMasculino_Checked(object sender, RoutedEventArgs e)
+        {
+            AlturaText.Focus();
+        }
+
+        private void AlturaText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                Button_Click(null, null);
+            }
         }
     }
 }
