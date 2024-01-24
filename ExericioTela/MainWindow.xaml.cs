@@ -4,6 +4,9 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ExercicioTela
 {
@@ -53,11 +56,14 @@ namespace ExercicioTela
 
             if (pessoaatual < 8)
             {
-                pessoas[pessoaatual] = new Pessoa
+                Pessoa novaPessoa = new Pessoa
                 {
                     Sexo = sexoSelecionado,
                     Altura = altura
                 };
+                novaPessoa.PropertyChanged += NovaPessoa_PropertyChanged;
+                novaPessoa.Altura *= 2;
+                pessoas[pessoaatual] = novaPessoa;
             }
 
             CheckFeminino.IsChecked = false;
@@ -70,6 +76,48 @@ namespace ExercicioTela
             if (pessoaatual == 8)
             {
                 MostrarResultados();
+            }
+        }
+
+        private void NovaPessoa_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            MessageBox.Show("Alguem mudou");
+        }
+
+        public class Pessoa : INotifyPropertyChanged
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private string _sexo;
+            private double _altura;
+
+            public string Sexo { 
+                get
+                {
+                    return _sexo;
+                }
+                set
+                {
+                    if (_sexo != value)
+                    {
+                        _sexo = value;
+                        NotifyPropertyChanged();
+                    }
+                } 
+            }
+            public double Altura
+            {
+                get => _altura; 
+                set
+                {
+                    _altura = value;
+                    NotifyPropertyChanged();
+                }
+            }
+
+            public void NotifyPropertyChanged([CallerMemberName] string propName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
             }
         }
 
@@ -93,11 +141,7 @@ namespace ExercicioTela
 
             ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {quantidadeMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
         }
-        public class Pessoa
-        {
-            public string Sexo { get; set; }
-            public double Altura { get; set; }
-        }
+
 
         private void CheckFeminino_Checked(object sender, RoutedEventArgs e)
         {
