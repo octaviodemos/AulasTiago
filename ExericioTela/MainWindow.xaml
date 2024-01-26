@@ -26,5 +26,13 @@
         <StackPanel Margin="16,149,4,1">
             <TextBlock x:Name="ResultsText" Text="" Margin="0,0,0,5"/>
         </StackPanel>
+        <StackPanel Margin="500,200,0,0">
+            <ListBox x:Name="ParcialListBox" Height="166" Width="184" DisplayMemberPath="MostrandoPessoas">
+            </ListBox>
+        </StackPanel>
+        <StackPanel Margin="20,350,0,0">
+            <Button x:Name="ResetButton" Content="Reiniciar" Margin="0,0,0,0" Height="50" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#C70EF5" FontStyle="Italic" Click="Reiniciar">
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>
