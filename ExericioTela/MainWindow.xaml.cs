@@ -27,32 +27,57 @@ namespace ExercicioTela
             InitializeComponent();
 
         }
-
         public static void InserirPessoa(Pessoa pessoa)
         {
-            using(SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
+            using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
             {
                 conn.Open();
-                SqlCommand command = conn.CreateCommand();
-                string sql = $@"
-INSERT INTO [dbo].[Pessoas]
-           ([Id]
-           ,[Sexo]
-           ,[Altura])
-     VALUES
-           ({pessoa.Id}
-           ,'{pessoa.Sexo}'
-           ,{pessoa.Altura.ToString().Replace(",", ".")}
-";
-                command.CommandText = sql; //define o texto do comando
-                int qtd = command.ExecuteNonQuery(); //retorna linhas afetadas
-                Console.WriteLine("Linhas afetadas:" + qtd);
+
+                string sql = @"
+            INSERT INTO [dbo].[Pessoas]
+            ([Id], [Sexo], [Altura])
+            VALUES
+            (@Id, @Sexo, @Altura)
+        ";
+
+                using (SqlCommand command = new SqlCommand(sql, conn))
+                {
+                    // Adicionando parâmetros
+                    command.Parameters.AddWithValue("@Id", pessoa.Id);
+                    command.Parameters.AddWithValue("@Sexo", pessoa.Sexo);
+                    command.Parameters.AddWithValue("@Altura", pessoa.Altura);
+
+                    int qtd = command.ExecuteNonQuery(); // Retorna linhas afetadas
+                    Console.WriteLine("Linhas afetadas: " + qtd);
+                }
             }
-
-
-
-
         }
+
+        //        public static void InserirPessoa(Pessoa pessoa)
+        //        {
+        //            using(SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
+        //            {
+        //                conn.Open();
+        //                SqlCommand command = conn.CreateCommand();
+        //                string sql = $@"
+        //INSERT INTO [dbo].[Pessoas]
+        //           ([Id]
+        //           ,[Sexo]
+        //           ,[Altura])
+        //     VALUES
+        //           ({pessoa.Id}
+        //           ,'{pessoa.Sexo}'
+        //           ,{pessoa.Altura.ToString().Replace(",", ".")}
+        //";
+        //                command.CommandText = sql; //define o texto do comando
+        //                int qtd = command.ExecuteNonQuery(); //retorna linhas afetadas
+        //                Console.WriteLine("Linhas afetadas:" + qtd);
+        //            }
+
+
+
+
+        //        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
