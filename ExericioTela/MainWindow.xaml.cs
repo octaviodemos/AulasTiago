@@ -8,76 +8,88 @@ using System.Windows.Controls;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static ExercicioTela.MainWindow;
 
 
 namespace ExercicioTela
 {
     public partial class MainWindow : Window
     {
-        Pessoa[] pessoas = new Pessoa[8];
+        List<Pessoa> Listpessoas = new List<Pessoa>();
         int pessoaatual = 0;
 
-        int quantidadeMulheresMenos170 = 0;
-        double alturaHomemMaisAlto = 0;
-
-        List<Pessoa> listaPessoas = new List<Pessoa>();
+        int totalMulheresMenos170 = 0;
+        float alturaHomemMaisAlto = 0;
         
         public MainWindow()
         {
             InitializeComponent();
 
+            CarregaPessoas();
         }
+
         public static void InserirPessoa(Pessoa pessoa)
         {
             using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
             {
                 conn.Open();
-
-                string sql = @"
-            INSERT INTO [dbo].[Pessoas]
-            ([Id], [Sexo], [Altura])
-            VALUES
-            (@Id, @Sexo, @Altura)
+                SqlCommand command = conn.CreateCommand();
+                string sql = $@"
+        INSERT INTO [dbo].[Pessoas]
+                   ([Sexo]
+                   ,[Altura])
+             VALUES
+                   ('{pessoa.Sexo}'
+                   ,{pessoa.Altura.ToString().Replace(",", ".")})
         ";
+                command.CommandText = sql; //define o texto do comando
+                int qtd = command.ExecuteNonQuery(); //retorna linhas afetadas
+                Console.WriteLine("Linhas afetadas:" + qtd);
 
-                using (SqlCommand command = new SqlCommand(sql, conn))
-                {
-                    // Adicionando parâmetros
-                    command.Parameters.AddWithValue("@Id", pessoa.Id);
-                    command.Parameters.AddWithValue("@Sexo", pessoa.Sexo);
-                    command.Parameters.AddWithValue("@Altura", pessoa.Altura);
-
-                    int qtd = command.ExecuteNonQuery(); // Retorna linhas afetadas
-                    Console.WriteLine("Linhas afetadas: " + qtd);
-                }
             }
+
         }
 
-        //        public static void InserirPessoa(Pessoa pessoa)
-        //        {
-        //            using(SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
-        //            {
-        //                conn.Open();
-        //                SqlCommand command = conn.CreateCommand();
-        //                string sql = $@"
-        //INSERT INTO [dbo].[Pessoas]
-        //           ([Id]
-        //           ,[Sexo]
-        //           ,[Altura])
-        //     VALUES
-        //           ({pessoa.Id}
-        //           ,'{pessoa.Sexo}'
-        //           ,{pessoa.Altura.ToString().Replace(",", ".")}
-        //";
-        //                command.CommandText = sql; //define o texto do comando
-        //                int qtd = command.ExecuteNonQuery(); //retorna linhas afetadas
-        //                Console.WriteLine("Linhas afetadas:" + qtd);
-        //            }
+        public List<Pessoa> LoadPessoas()
+        {
+            List<Pessoa> pessoas = new List<Pessoa>();
 
+            using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
+            {
+                conn.Open();
+                SqlCommand command = conn.CreateCommand();
+                string sql = $@"
+        SELECT  Id
+                ,Sexo
+                ,Altura
+        FROM Pessoas;
+        ";
+                command.CommandText = sql;
+                SqlDataReader reader = command.ExecuteReader();
 
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    string sexo = reader.GetString(1);
+                    double altura = reader.GetDouble(2);
 
+                    pessoas.Add(new Pessoa()
+                    {
+                        Id = id,
+                        Sexo = sexo,
+                        Altura = altura,
+                    });
+                }
+            
+            }
+            return pessoas;
+        }
 
-        //        }
+        private void CarregaPessoas()
+        {
+            ParcialListBox.ItemsSource = null;
+            ParcialListBox.ItemsSource = LoadPessoas();
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -115,29 +127,16 @@ namespace ExercicioTela
                 return;
             }
 
-            if (pessoaatual < 8)
-            {
                 Pessoa novaPessoa = new Pessoa
                 {
                     Sexo = sexoSelecionado,
                     Altura = altura
                 };
 
-                listaPessoas.Add(novaPessoa);
                 InserirPessoa(novaPessoa);
-                ParcialListBox.ItemsSource = null;
-                ParcialListBox.ItemsSource = listaPessoas;
-                pessoas[pessoaatual] = novaPessoa;
-
-
-            }
+                Listpessoas.Add(novaPessoa);
 
             pessoaatual++;
-
-            if (pessoaatual == 8)
-            {
-                MostrarResultados();
-            }
 
             MessageBox.Show("Dados salvos");
 
@@ -151,6 +150,7 @@ namespace ExercicioTela
 
         public class Pessoa : INotifyPropertyChanged
         {
+            private int _id;
             private string _sexo;
             private double _altura;
 
@@ -193,26 +193,26 @@ namespace ExercicioTela
 
         private void MostrarResultados()
         {
-            foreach (var pessoa in pessoas)
+            foreach (var pessoa in Listpessoas)
             {
                 if (pessoa != null)
                 {
                     if (pessoa.Sexo.ToLower() == "feminino" && pessoa.Altura < 1.70)
                     {
-                        quantidadeMulheresMenos170++;
+                        totalMulheresMenos170++;
                     }
 
                     if (pessoa.Sexo.ToLower() == "masculino")
                     {
                         if (pessoa.Altura > alturaHomemMaisAlto)
                         {
-                            alturaHomemMaisAlto = pessoa.Altura;
+                            alturaHomemMaisAlto = (float)pessoa.Altura;
                         }
                     }
                 }
             }
 
-            ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {quantidadeMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
+            ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {totalMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
         }
 
         private void CheckFeminino_Checked(object sender, RoutedEventArgs e)
@@ -239,13 +239,10 @@ namespace ExercicioTela
             CheckFeminino.IsChecked = false;
             CheckMasculino.IsChecked = false;
             AlturaText.Text = string.Empty;
-            listaPessoas.Clear();
             ParcialListBox.ItemsSource = null;
 
-            quantidadeMulheresMenos170 = 0;
+            totalMulheresMenos170 = 0;
             alturaHomemMaisAlto = 0;
-
-            pessoas = new Pessoa[8];
 
             pessoaatual = 0;
 
@@ -259,6 +256,10 @@ namespace ExercicioTela
             MessageBox.Show("Reniciado, pode preencher os dados novamente");
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            MostrarResultados();
+        }
     }
 
 }
