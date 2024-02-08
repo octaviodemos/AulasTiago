@@ -10,17 +10,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using static ExercicioTela.MainWindow;
 
-
 namespace ExercicioTela
 {
     public partial class MainWindow : Window
     {
-        List<Pessoa> Listpessoas = new List<Pessoa>();
-        int pessoaatual = 0;
+        List<Pessoa> pessoas = new List<Pessoa>();
 
-        int totalMulheresMenos170 = 0;
-        float alturaHomemMaisAlto = 0;
-        
         public MainWindow()
         {
             InitializeComponent();
@@ -52,7 +47,6 @@ namespace ExercicioTela
 
         public List<Pessoa> LoadPessoas()
         {
-            List<Pessoa> pessoas = new List<Pessoa>();
 
             using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
             {
@@ -80,15 +74,59 @@ namespace ExercicioTela
                         Altura = altura,
                     });
                 }
-            
+
             }
             return pessoas;
         }
 
+        public static void RemoverPessoa(Pessoa pessoa)
+        {
+            using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
+            {
+                conn.Open();
+                SqlCommand command = conn.CreateCommand();
+                string sql = $@"
+            DELETE 
+            FROM [dbo].[Pessoas] 
+            WHERE Id = {pessoa.Id}
+            ";
+                command.CommandText = sql;
+                int qtd = command.ExecuteNonQuery();
+                Console.WriteLine("Linhas afetadas:" + qtd);
+            }
+        }
+
+        public static void Removertudo()
+        {
+            using (SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Sexatura;Integrated Security=False;User Id=sa;Password=super990025;"))
+            {
+                conn.Open();
+                SqlCommand command = conn.CreateCommand();
+                string sql = $@"
+                DELETE 
+                FROM [dbo].[Pessoas]
+                ";
+                command.CommandText = sql;
+                int qtd = command.ExecuteNonQuery();
+                Console.WriteLine("Linhas afetadas:" + qtd);
+            }
+        }
+
         private void CarregaPessoas()
         {
+            pessoas.Clear();
             ParcialListBox.ItemsSource = null;
             ParcialListBox.ItemsSource = LoadPessoas();
+        }
+
+        private void CheckFeminino_Checked(object sender, RoutedEventArgs e)
+        {
+            AlturaText.Focus();
+        }
+
+        private void CheckMasculino_Checked(object sender, RoutedEventArgs e)
+        {
+            AlturaText.Focus();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -99,12 +137,12 @@ namespace ExercicioTela
 
             if (CheckFeminino.IsChecked == true)
             {
-                sexoSelecionado = "Feminino";
+                sexoSelecionado = "feminino";
             }
 
             if (CheckMasculino.IsChecked == true)
             {
-                sexoSelecionado = "Masculino";
+                sexoSelecionado = "masculino";
             }
 
             if (CheckFeminino.IsChecked == false && CheckMasculino.IsChecked == false)
@@ -127,23 +165,22 @@ namespace ExercicioTela
                 return;
             }
 
-                Pessoa novaPessoa = new Pessoa
-                {
-                    Sexo = sexoSelecionado,
-                    Altura = altura
-                };
+            Pessoa novaPessoa = new Pessoa
+            {
+                Sexo = sexoSelecionado,
+                Altura = altura
+            };
 
-                InserirPessoa(novaPessoa);
-                Listpessoas.Add(novaPessoa);
-
-            pessoaatual++;
+            InserirPessoa(novaPessoa);
+            //pessoas.Add(novaPessoa);
 
             MessageBox.Show("Dados salvos");
 
             CheckFeminino.IsChecked = false;
             CheckMasculino.IsChecked = false;
             AlturaText.Text = string.Empty;
-
+            CarregaPessoas();
+            MostrarResultados();
             AlturaText.Focus();
 
         }
@@ -187,21 +224,24 @@ namespace ExercicioTela
 
             protected virtual void NotifyPropertyChanged([CallerMemberName] string propName = "")
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+                if (PropertyChanged != null)
+                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
             }
         }
 
         private void MostrarResultados()
         {
-            foreach (var pessoa in Listpessoas)
+            int totalMulheresMenos170 = 0;
+            float alturaHomemMaisAlto = 0;
+
+            foreach (var pessoa in pessoas)
             {
-                if (pessoa != null)
+                if (pessoas != null)
                 {
                     if (pessoa.Sexo.ToLower() == "feminino" && pessoa.Altura < 1.70)
                     {
                         totalMulheresMenos170++;
                     }
-
                     if (pessoa.Sexo.ToLower() == "masculino")
                     {
                         if (pessoa.Altura > alturaHomemMaisAlto)
@@ -214,15 +254,9 @@ namespace ExercicioTela
 
             ResultsText.Text = $"Quantidade de mulheres com menos de 1.70m: {totalMulheresMenos170}\nAltura do homem mais alto: {alturaHomemMaisAlto} metros";
         }
-
-        private void CheckFeminino_Checked(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            AlturaText.Focus();
-        }
-
-        private void CheckMasculino_Checked(object sender, RoutedEventArgs e)
-        {
-            AlturaText.Focus();
+            MostrarResultados();
         }
 
         private void AlturaText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -235,31 +269,41 @@ namespace ExercicioTela
 
         private void ZerarDados()
         {
-
             CheckFeminino.IsChecked = false;
             CheckMasculino.IsChecked = false;
             AlturaText.Text = string.Empty;
             ParcialListBox.ItemsSource = null;
-
-            totalMulheresMenos170 = 0;
-            alturaHomemMaisAlto = 0;
-
-            pessoaatual = 0;
-
             ResultsText.Text = string.Empty;
         }
 
         private void Reiniciar(object sender, RoutedEventArgs e)
         {
             ZerarDados();
+            Removertudo();
 
             MessageBox.Show("Reniciado, pode preencher os dados novamente");
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Delete(object sender, RoutedEventArgs e)
         {
-            MostrarResultados();
+            if (ParcialListBox.SelectedItem != null)
+            {
+                Pessoa pessoaSelecionada = (Pessoa)ParcialListBox.SelectedItem;
+
+                pessoas.Remove(pessoaSelecionada);
+                RemoverPessoa(pessoaSelecionada);
+
+                Console.WriteLine($"Pessoa removida: {pessoaSelecionada.Sexo}, {pessoaSelecionada.Altura}m");
+
+                CarregaPessoas();
+                MostrarResultados();
+
+                MessageBox.Show("Dados deletados");
+            }
+            else
+            {
+                MessageBox.Show("Selecione uma pessoa para deletar.");
+            }
         }
     }
-
 }
