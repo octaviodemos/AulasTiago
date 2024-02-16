@@ -27,9 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pessoa.idade", "Pessoas\Pes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pessoa.Altura", "Pessoa.Altura\Pessoa.Altura.csproj", "{5604761A-9D50-42E7-97A6-A064DD3E7194}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExericioTela", "ExericioTela\ExericioTela.csproj", "{7576C420-E067-4C0F-A6E9-889264C59199}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cachorros", "Cachorros\Cachorros.csproj", "{B658C123-A1A2-4D85-B614-886472C0FCAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cachorros", "Cachorros\Cachorros.csproj", "{B658C123-A1A2-4D85-B614-886472C0FCAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +83,6 @@ Global
 		{5604761A-9D50-42E7-97A6-A064DD3E7194}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5604761A-9D50-42E7-97A6-A064DD3E7194}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5604761A-9D50-42E7-97A6-A064DD3E7194}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7576C420-E067-4C0F-A6E9-889264C59199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7576C420-E067-4C0F-A6E9-889264C59199}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7576C420-E067-4C0F-A6E9-889264C59199}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7576C420-E067-4C0F-A6E9-889264C59199}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B658C123-A1A2-4D85-B614-886472C0FCAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B658C123-A1A2-4D85-B614-886472C0FCAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B658C123-A1A2-4D85-B614-886472C0FCAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
